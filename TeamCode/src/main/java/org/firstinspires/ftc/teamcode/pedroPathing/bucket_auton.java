@@ -26,14 +26,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
-
 @Autonomous(name = "bucket_auton", group = "Examples")
 public class bucket_auton extends OpMode {
 
     private pedroPathing.PIDController controller;
     public static double p = 0.0009, i = 0, d = 0.0001;
     public static double f = 0.0005;
-    public static double open_pos = 0.35, close_pos = 0.125;
+    public static double open_pos = 0.4, close_pos = 0.125;
     public static double normal_pos = 1, upside_pos = 0.32;
     public static int target = 0;
 
@@ -49,7 +48,7 @@ public class bucket_auton extends OpMode {
     private int pathState;
     private final Pose startPose = new Pose(10, 110, Math.toRadians(270));
     private final Pose dep_1 = new Pose(10, 118, Math.toRadians(270));
-    private final Pose pick2_pos = new Pose(23, 120, Math.toRadians(180));
+    private final Pose pick2_pos = new Pose(29, 112, Math.toRadians(180));
 
 
     private PathChain score1;
@@ -89,8 +88,9 @@ public class bucket_auton extends OpMode {
                 break;
 
             case 1:
-                if (!follower.isBusy()) {
+                if(follower.getPose().getX() > 116)
                     clawservo.setPosition(open_pos);
+                if (!follower.isBusy()) {
                     follower.followPath(pick2);
 
                     setPathState(2);
@@ -100,8 +100,10 @@ public class bucket_auton extends OpMode {
                 if (pathTimer.getElapsedTimeSeconds()>0.5) {
                     target=-1500;
 
-                    setPathState(3);
                 }
+                if(pathTimer.getElapsedTimeSeconds()>0.8)
+                    setPathState(3);
+
                 break;
 
             case 3:
