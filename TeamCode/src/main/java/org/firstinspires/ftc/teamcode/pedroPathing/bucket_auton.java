@@ -1,4 +1,4 @@
-package pedroPathing;
+package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -24,13 +24,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 
-import pedroPathing.constants.FConstants;
-import pedroPathing.constants.LConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
 @Autonomous(name = "bucket_auton", group = "Examples")
 public class bucket_auton extends OpMode {
 
-    private PIDController controller;
+    private pedroPathing.PIDController controller;
     public static double p = 0.0009, i = 0, d = 0.0001;
     public static double f = 0.0005;
     public static double open_pos = 0.35, close_pos = 0.125;
@@ -83,7 +83,7 @@ public class bucket_auton extends OpMode {
 
                 follower.followPath(score1);
                 if (pathTimer.getElapsedTimeSeconds() > 0.1) {
-                    target=-1000;
+                    target=-900;
                     setPathState(1);
                 }
                 break;
@@ -92,12 +92,19 @@ public class bucket_auton extends OpMode {
                 if (!follower.isBusy()) {
                     clawservo.setPosition(open_pos);
                     follower.followPath(pick2);
-                    target=-1500;
+
                     setPathState(2);
                 }
                 break;
+            case 2:
+                if (pathTimer.getElapsedTimeSeconds()>0.5) {
+                    target=-1500;
 
-                case 2:
+                    setPathState(3);
+                }
+                break;
+
+            case 3:
                 if (!follower.isBusy()) {
                     clawservo.setPosition(close_pos);
 
@@ -131,7 +138,7 @@ public class bucket_auton extends OpMode {
         clawservo = hardwareMap.get(Servo.class, "claw_servo");
         clawservo.setPosition(close_pos);
 
-        controller = new PIDController(p, i, d);
+        controller = new pedroPathing.PIDController(p, i, d);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);

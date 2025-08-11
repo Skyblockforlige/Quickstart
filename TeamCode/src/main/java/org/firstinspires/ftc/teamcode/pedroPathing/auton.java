@@ -1,4 +1,4 @@
-package pedroPathing;
+/*package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -30,7 +30,7 @@ import pedroPathing.constants.LConstants;
 @Autonomous(name = "auton", group = "Examples")
 public class auton extends OpMode {
 
-    private PIDController controller;
+    private pedroPathing.PIDController controller;
     NormalizedColorSensor colorSensor;
     float[] hsvValues = new float[3];
 
@@ -487,3 +487,4 @@ public class auton extends OpMode {
         return (hue >= minHue && hue <= maxHue) && (distance <= maxDistanceCm);
     }
 }
+*/
