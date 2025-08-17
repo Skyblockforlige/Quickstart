@@ -36,9 +36,9 @@ public class bucketAuton extends OpMode {
     private Follower follower;
     private Timer pathTimer, opmodeTimer;
     private int pathState;
-    private final Pose startPose = new Pose(10, 110, Math.toRadians(270));
-    private final Pose dep_1 = new Pose(10, 118, Math.toRadians(270));
-    private final Pose pick2_pos = new Pose(29, 112, Math.toRadians(180));
+    private final Pose startPose = new Pose(10, 110, Math.toRadians(0));
+    //private final Pose dep_1 = new Pose(10, 118, Math.toRadians(270));
+    //private final Pose pick2_pos = new Pose(29, 112, Math.toRadians(180));
 
     private PathChain score1;
     private Path pick2;
@@ -57,7 +57,7 @@ public class bucketAuton extends OpMode {
                                 new Point(33.000, 120.000, Point.CARTESIAN)
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                 .build();
 
         public static PathChain line2 = builder
@@ -127,8 +127,6 @@ public class bucketAuton extends OpMode {
     public void buildPaths() {
         // Use generated paths
         score1 = GeneratedPaths.line1;
-        pick2 = new Path(new BezierLine(new Point(dep_1), new Point(pick2_pos)));
-        pick2.setLinearHeadingInterpolation(dep_1.getHeading(), pick2_pos.getHeading());
     }
 
     public void autonomousPathUpdate() {

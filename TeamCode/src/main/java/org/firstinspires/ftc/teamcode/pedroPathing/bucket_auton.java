@@ -62,7 +62,7 @@ public class bucket_auton extends OpMode {
         /*
         score5 = new Path(new BezierCurve( new Point(pick_pos),new Point(dep5_control), new Point(dep5)));
         score5.setLinearHeadingInterpolation(pick_pos.getHeading(), dep5.getHeading());
-
+        */
         score1 = follower.pathBuilder()
                 .addPath(
                         new BezierLine(new Point(startPose), new Point(dep_1)))
@@ -73,87 +73,6 @@ public class bucket_auton extends OpMode {
         pick2 = new Path(new BezierLine( new Point(dep_1),new Point(pick2_pos)));
         pick2.setLinearHeadingInterpolation(dep_1.getHeading(), pick2_pos.getHeading());
 
-
-        public class GeneratedPaths {
-
-            public static PathBuilder builder = new PathBuilder();
-
-            public static PathChain line1 = builder
-                    .addPath(
-                            new BezierCurve(
-                                    new Point(10.000, 110.000, Point.CARTESIAN),
-                                    new Point(9.109, 122.100, Point.CARTESIAN),
-                                    new Point(33.000, 120.000, Point.CARTESIAN)
-                            )
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(null), Math.toRadians(0))
-                    .build();
-
-            public static PathChain line2 = builder
-                    .addPath(
-                            new BezierLine(
-                                    new Point(33.000, 120.000, Point.CARTESIAN),
-                                    new Point(14.923, 128.495, Point.CARTESIAN)
-                            )
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
-                    .setReversed(true)
-                    .build();
-
-            public static PathChain line3 = builder
-                    .addPath(
-                            new BezierLine(
-                                    new Point(14.923, 128.495, Point.CARTESIAN),
-                                    new Point(34.366, 131.790, Point.CARTESIAN)
-                            )
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
-                    .build();
-
-            public static PathChain line4 = builder
-                    .addPath(
-                            new BezierLine(
-                                    new Point(34.366, 131.790, Point.CARTESIAN),
-                                    new Point(14.923, 128.495, Point.CARTESIAN)
-                            )
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-45))
-                    .build();
-
-            public static PathChain line5 = builder
-                    .addPath(
-                            new BezierLine(
-                                    new Point(14.923, 128.495, Point.CARTESIAN),
-                                    new Point(32.172, 132.565, Point.CARTESIAN)
-                            )
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(45))
-                    .build();
-
-            public static PathChain line6 = builder
-                    .addPath(
-                            new BezierLine(
-                                    new Point(32.172, 132.565, Point.CARTESIAN),
-                                    new Point(14.923, 128.495, Point.CARTESIAN)
-                            )
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(-45))
-                    .build();
-
-            public static PathChain line7 = builder
-                    .addPath(
-                            new BezierCurve(
-                                    new Point(14.923, 128.495, Point.CARTESIAN),
-                                    new Point(63.182, 131.790, Point.CARTESIAN),
-                                    new Point(63.182, 94.579, Point.CARTESIAN)
-                            )
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(90))
-                    .setReversed(true)
-                    .build();
-        }
-
-         */
 
     }
 
