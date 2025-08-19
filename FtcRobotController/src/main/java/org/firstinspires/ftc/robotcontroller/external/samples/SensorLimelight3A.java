@@ -101,7 +101,7 @@ public class SensorLimelight3A extends LinearOpMode {
             LLResult result = limelight.getLatestResult();
             if (result != null) {
                 // Access general information
-                Pose3D botpose = result.getBotpose();
+                //Pose3D botpose = result.getBotpose();
                 double captureLatency = result.getCaptureLatency();
                 double targetingLatency = result.getTargetingLatency();
                 double parseLatency = result.getParseLatency();
@@ -116,7 +116,7 @@ public class SensorLimelight3A extends LinearOpMode {
                     telemetry.addData("tync", result.getTyNC());
                     telemetry.addData("ta", result.getTa());
 
-                    telemetry.addData("Botpose", botpose.toString());
+                    //telemetry.addData("Botpose", botpose.toString());
 
                     // Access barcode results
 
