@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
@@ -14,18 +13,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import android.graphics.Color;
-import com.qualcomm.robotcore.hardware.SwitchableLight;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-
-
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+
 @Autonomous(name = "bucket_auton", group = "Examples")
 public class bucket_auton extends OpMode {
 
@@ -33,16 +23,13 @@ public class bucket_auton extends OpMode {
     public static double p = 0.0009, i = 0, d = 0.0001;
     public static double f = 0.0005;
     public static double open_pos = 0.4, close_pos = 0.125;
-    public static double normal_pos = 1, upside_pos = 0.32;
+    public static double normal_pos = 1, upside_pos = 0.32, middle = 0.66;
     public static int target = 0;
-
-
 
     private DcMotor arm;
     private Servo clawservo;
     private Servo twist;
 
-    int iftrue = 0;
     private Follower follower;
     private Timer pathTimer, opmodeTimer;
     private int pathState;
@@ -50,28 +37,47 @@ public class bucket_auton extends OpMode {
     private final Pose dep_1 = new Pose(10, 118, Math.toRadians(270));
     private final Pose pick2_pos = new Pose(29, 112, Math.toRadians(180));
 
+    private final Pose Dep_2 = new Pose(20,124, Math.toRadians(315));
+
+    private final Pose pick3_pos =new Pose(29,126, Math.toRadians(180));
+
+    private final Pose pick4_pos = new Pose(48, 124, Math.toRadians(270));
 
     private PathChain score1;
     private Path pick2;
+    private Path score2;
+
+    private Path pick3;
+    private Path score3;
+
+    private Path pick4;
+    private Path score4;
 
     public void buildPaths() {
-
-        //score1 = new Path(new BezierLine( new Point(startPose),new Point(dep_1)));
-        //score1.setLinearHeadingInterpolation(startPose.getHeading(), dep_1.getHeading());
-
-        /*
-        score5 = new Path(new BezierCurve( new Point(pick_pos),new Point(dep5_control), new Point(dep5)));
-        score5.setLinearHeadingInterpolation(pick_pos.getHeading(), dep5.getHeading());
-        */
+        // ---- Original paths ----
         score1 = follower.pathBuilder()
-                .addPath(
-                        new BezierLine(new Point(startPose), new Point(dep_1)))
+                .addPath(new BezierLine(new Point(startPose), new Point(dep_1)))
                 .setConstantHeadingInterpolation(Math.toRadians(270))
-
-
                 .build();
-        pick2 = new Path(new BezierLine( new Point(dep_1),new Point(pick2_pos)));
+
+        pick2 = new Path(new BezierLine(new Point(dep_1), new Point(pick2_pos)));
         pick2.setLinearHeadingInterpolation(dep_1.getHeading(), pick2_pos.getHeading());
+
+
+        score2 = new Path(new BezierLine(new Point(pick2_pos), new Point(Dep_2)));
+        score2.setLinearHeadingInterpolation(pick2_pos.getHeading(), Dep_2.getHeading());
+
+        pick3 = new Path(new BezierLine(new Point(Dep_2), new Point(pick3_pos)));
+        pick3.setLinearHeadingInterpolation(Dep_2.getHeading(), pick3_pos.getHeading());
+        score3 = new Path(new BezierLine(new Point(pick3_pos), new Point(Dep_2)));
+        score3.setLinearHeadingInterpolation(pick3_pos.getHeading(), Dep_2.getHeading());
+
+        pick4 = new Path(new BezierLine(new Point(Dep_2), new Point(pick4_pos)));
+        pick4.setLinearHeadingInterpolation(Dep_2.getHeading(), pick4_pos.getHeading());
+
+        score4 = new Path(new BezierLine(new Point(pick4_pos), new Point(Dep_2)));
+        score4.setLinearHeadingInterpolation(pick4_pos.getHeading(), Dep_2.getHeading());
+
 
 
     }
@@ -79,41 +85,96 @@ public class bucket_auton extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-
                 follower.followPath(score1);
                 if (pathTimer.getElapsedTimeSeconds() > 0.1) {
-                    target=-900;
+                    target = -830;
                     setPathState(1);
                 }
                 break;
 
             case 1:
-                if(follower.getPose().getX() > 116)
+                if (!follower.isBusy())
                     clawservo.setPosition(open_pos);
-                if (!follower.isBusy()) {
-                    follower.followPath(pick2);
 
+                if (pathTimer.getElapsedTimeSeconds()>5) {
+                    follower.followPath(pick2);
                     setPathState(2);
                 }
                 break;
+
             case 2:
-                if (pathTimer.getElapsedTimeSeconds()>0.5) {
-                    target=-1500;
-
+                if (pathTimer.getElapsedTimeSeconds() > 0.5) {
+                    target = -1500;
                 }
-                if(pathTimer.getElapsedTimeSeconds()>0.8)
+                if (pathTimer.getElapsedTimeSeconds() > 0.8)
                     setPathState(3);
-
                 break;
-
             case 3:
                 if (!follower.isBusy()) {
                     clawservo.setPosition(close_pos);
-
-                    setPathState(-1);
+                    if(pathTimer.getElapsedTimeSeconds()>3)
+                    if(clawservo.getPosition()==0.125) {
+                        target = -830;
+                        if (pathTimer.getElapsedTimeSeconds() > 5) {
+                            follower.followPath(score2);
+                            setPathState(4);
+                        }
+                    }
                 }
                 break;
-
+            case 4:
+                if (!follower.isBusy()) {
+                    clawservo.setPosition(open_pos);
+                    if (clawservo.getPosition() == 0.4) {
+                        target = -1500;
+                            follower.followPath(pick3);
+                            setPathState(5);
+                    }
+                }
+                break;
+            case 5:
+                if (!follower.isBusy()) {
+                    clawservo.setPosition(close_pos);
+                    if (pathTimer.getElapsedTimeSeconds() > 3) {
+                        target = -830;
+                        if (pathTimer.getElapsedTimeSeconds() > 1) {
+                                follower.followPath(score3);
+                                setPathState(6);
+                            }
+                        }
+                }
+                break;
+            case 6:
+                if (!follower.isBusy()) {
+                    clawservo.setPosition(open_pos);
+                    if (clawservo.getPosition() == 0.4) {
+                        target = -1500;
+                        follower.followPath(pick4);
+                        twist.setPosition(middle);
+                        setPathState(7);
+                    }
+                }
+                break;
+            case 7:
+                if (!follower.isBusy()) {
+                    clawservo.setPosition(close_pos);
+                    if (pathTimer.getElapsedTimeSeconds()>2) {
+                        target = -900;
+                        if (pathTimer.getElapsedTimeSeconds() > 0.5) {
+                            follower.followPath(score4);
+                            setPathState(8);
+                        }
+                    }
+                }
+                break;
+            case 8:
+                if (!follower.isBusy()) {
+                    clawservo.setPosition(open_pos);
+                    if (clawservo.getPosition() == 0.4) {
+                        setPathState(-1);
+                    }
+                }
+                break;
 
         }
     }
@@ -134,7 +195,6 @@ public class bucket_auton extends OpMode {
         arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-
         twist = hardwareMap.get(Servo.class, "twist");
         twist.setPosition(normal_pos);
         clawservo = hardwareMap.get(Servo.class, "claw_servo");
@@ -151,8 +211,6 @@ public class bucket_auton extends OpMode {
 
     @Override
     public void init_loop() {
-        telemetry.addLine("Waiting for start...");
-        telemetry.update();
     }
 
     @Override
@@ -184,6 +242,4 @@ public class bucket_auton extends OpMode {
 
     @Override
     public void stop() {}
-
-    // Helper method for color and distance check
 }
