@@ -126,9 +126,12 @@ public class bucket_auton extends OpMode {
                 if (!follower.isBusy()) {
                     clawservo.setPosition(open_pos);
                     if (clawservo.getPosition() == 0.4) {
-                        target = -1500;
-                            follower.followPath(pick3);
+                        follower.followPath(pick3);
+
+                        if (pathTimer.getElapsedTimeSeconds() > 2) {
+                            target = -1500;
                             setPathState(5);
+                        }
                     }
                 }
                 break;
@@ -137,7 +140,7 @@ public class bucket_auton extends OpMode {
                     clawservo.setPosition(close_pos);
                     if (pathTimer.getElapsedTimeSeconds() > 3) {
                         target = -830;
-                        if (pathTimer.getElapsedTimeSeconds() > 1) {
+                        if (pathTimer.getElapsedTimeSeconds() > 3) {
                                 follower.followPath(score3);
                                 setPathState(6);
                             }
@@ -159,8 +162,8 @@ public class bucket_auton extends OpMode {
                 if (!follower.isBusy()) {
                     clawservo.setPosition(close_pos);
                     if (pathTimer.getElapsedTimeSeconds()>2) {
-                        target = -900;
-                        if (pathTimer.getElapsedTimeSeconds() > 0.5) {
+                        target = -830;
+                        if (pathTimer.getElapsedTimeSeconds() > 1 ) {
                             follower.followPath(score4);
                             setPathState(8);
                         }
