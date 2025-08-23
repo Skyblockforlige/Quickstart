@@ -148,11 +148,12 @@ public class bucket_auton extends OpMode {
                         if (pathTimer.getElapsedTimeSeconds() > 5) {
                             target = -870;
                         }
-                            if (pathTimer.getElapsedTimeSeconds() > 6) {
-                                follower.followPath(score3);
-                                setPathState(7);
 
-                        }
+                    }
+                    if (pathTimer.getElapsedTimeSeconds() > 6) {
+                        follower.followPath(score3);
+                        setPathState(7);
+
                     }
                 }
                 break;
