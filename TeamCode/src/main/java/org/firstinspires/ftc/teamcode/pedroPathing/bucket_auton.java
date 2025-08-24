@@ -38,8 +38,8 @@ public class bucket_auton extends OpMode {
     private final Pose pick2_pos = new Pose(31, 112, Math.toRadians(180));
     private final Pose Dep_2 = new Pose(20,124, Math.toRadians(315));
     private final Pose pick3_pos = new Pose(31,126, Math.toRadians(180));
-    private final Pose pick4_pos = new Pose(48, 124, Math.toRadians(270));
-    private final Pose pick4_back = new Pose(48,120, Math.toRadians(270));
+    private final Pose pick4_pos = new Pose(48, 121, Math.toRadians(270));
+    private final Pose pick4_back = new Pose(48,119, Math.toRadians(270));
 
     private PathChain score1;
     private Path pick2;
