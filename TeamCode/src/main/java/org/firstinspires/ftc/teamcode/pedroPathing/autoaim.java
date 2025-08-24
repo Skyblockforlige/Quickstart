@@ -44,7 +44,7 @@ public class autoaim extends OpMode {
     private Timer pathTimer, opmodeTimer;
     private int pathState;
     private final Pose startPose = new Pose(10, 110, Math.toRadians(0));
-    private  Pose dep_1 = new Pose(10, 110.5, Math.toRadians(0));
+    private  Pose dep_1 = new Pose(10, 110.15, Math.toRadians(0));
     public Limelight3A limelight;
     private PathChain align;
     List<LLResultTypes.DetectorResult> detectorResults;
@@ -145,7 +145,7 @@ public class autoaim extends OpMode {
                 }
                 if(result.getTx() > 16){
                     //startPose.setY(dep_1.getY());
-                    dep_1.setY(dep_1.getY()+0.25);
+                    dep_1.setY(dep_1.getY()+0.15);
                     buildPaths();
                     follower.update();
 
@@ -154,7 +154,7 @@ public class autoaim extends OpMode {
                 if (result.getTx() < 10) {
                     //startPose.setY(dep_1.getY());
 
-                    dep_1.setY(dep_1.getY()-0.25);
+                    dep_1.setY(dep_1.getY()-0.15);
                     buildPaths();
                     follower.update();
 
@@ -165,6 +165,7 @@ public class autoaim extends OpMode {
                     follower.update();
 
                     autonomousPathUpdate();
+                    follower.breakFollowing();
                     setPathState(-1);
                     stop();
                 }
