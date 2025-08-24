@@ -145,7 +145,7 @@ public class autoaim extends OpMode {
                 }
                 if(result.getTx() > 16){
                     //startPose.setY(dep_1.getY());
-                    dep_1.setY(dep_1.getY()+0.5);
+                    dep_1.setY(dep_1.getY()+0.25);
                     buildPaths();
                     follower.update();
 
@@ -154,7 +154,7 @@ public class autoaim extends OpMode {
                 if (result.getTx() < 10) {
                     //startPose.setY(dep_1.getY());
 
-                    dep_1.setY(dep_1.getY()-0.5);
+                    dep_1.setY(dep_1.getY()-0.25);
                     buildPaths();
                     follower.update();
 
@@ -165,6 +165,7 @@ public class autoaim extends OpMode {
                     follower.update();
 
                     autonomousPathUpdate();
+                    setPathState(-1);
                     stop();
                 }
 
