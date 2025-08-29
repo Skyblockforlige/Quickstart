@@ -15,6 +15,7 @@ import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -22,7 +23,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
 import java.util.List;
-
+@TeleOp
 public class autoaim extends OpMode {
 
     private pedroPathing.PIDController controller;
@@ -43,7 +44,7 @@ public class autoaim extends OpMode {
     private Timer pathTimer, opmodeTimer;
     private int pathState;
     private final Pose startPose = new Pose(10, 110, Math.toRadians(0));
-    private  Pose dep_1 = new Pose(10, 110.5, Math.toRadians(0));
+    private  Pose dep_1 = new Pose(10, 110.15, Math.toRadians(0));
     public Limelight3A limelight;
     private PathChain align;
     List<LLResultTypes.DetectorResult> detectorResults;
@@ -62,7 +63,7 @@ public class autoaim extends OpMode {
         */
         align = follower.pathBuilder()
                 .addPath(
-                        new BezierLine(new Point(startPose), new Point(dep_1)))
+                        new BezierLine(new Point(follower.getPose()), new Point(dep_1)))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
 
 
@@ -96,10 +97,9 @@ public class autoaim extends OpMode {
             case 0:
 
                 follower.followPath(align);
-                if (pathTimer.getElapsedTimeSeconds() > 0.1) {
-                    target=-900;
-                }
-                setPathState(0);
+                //if (pathTimer.getElapsedTimeSeconds() > 0.1) {
+                   // target=-900;
+                //}
                 break;
 
         }
@@ -136,31 +136,48 @@ public class autoaim extends OpMode {
                 telemetry.addData("ty", result.getTy());
                 telemetry.addData("tync", result.getTyNC());
                 telemetry.addData("ta", result.getTa());
+                
 
 
                 detectorResults = result.getDetectorResults();
                 for (LLResultTypes.DetectorResult dr : detectorResults) {
                     telemetry.addData("Detector", "Class: %s, Area: %.2f", dr.getClassName(), dr.getTargetArea());
                 }
+                if(result.getTx() > 16){
+                    //startPose.setY(dep_1.getY());
+                    dep_1.setY(dep_1.getY()+0.15);
+                    buildPaths();
+                    follower.update();
 
+                    autonomousPathUpdate();
+                }
+                if (result.getTx() < 10) {
+                    //startPose.setY(dep_1.getY());
+
+                    dep_1.setY(dep_1.getY()-0.15);
+                    buildPaths();
+                    follower.update();
+
+                    autonomousPathUpdate();
+                }
+                if(result.getTx() >= 10 && result.getTx() <=16){
+                    buildPaths();
+                    follower.update();
+
+                    autonomousPathUpdate();
+                    follower.breakFollowing();
+                    setPathState(-1);
+                    stop();
+                }
 
 
             }
         } else {
             telemetry.addData("Limelight", "No data available");
         }
-        if(result.getTx() < 4.6){
-            dep_1.setY(dep_1.getY()+0.5);
-            buildPaths();
-        } else if (result.getTx() > 4.9) {
-            dep_1.setY(dep_1.getY()-0.5);
-        } else {
-            stop();
-        }
-        telemetry.update();
-        follower.update();
 
-        autonomousPathUpdate();
+        //telemetry.update();
+
 
 
 
@@ -172,5 +189,6 @@ public class autoaim extends OpMode {
 
         telemetry.update();
     }
+
 
 }

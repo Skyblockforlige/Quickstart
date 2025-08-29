@@ -9,6 +9,8 @@ import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,8 +18,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
+import java.util.List;
+
 @Autonomous(name = "bucket_auton", group = "Examples")
-public class bucket_auton extends OpMode {
+public class bucketautonwautoaim extends OpMode {
 
     private pedroPathing.PIDController controller;
     public static double p = 0.0009, i = 0, d = 0.0001;
@@ -42,6 +46,7 @@ public class bucket_auton extends OpMode {
     private final Pose pick4_back = new Pose(48,119, Math.toRadians(270));
 
     private PathChain score1;
+    private Path align;
     private Path pick2;
     private Path score2;
     private Path pick3;
@@ -49,6 +54,10 @@ public class bucket_auton extends OpMode {
     private Path pick4;
     private Path score4;
     private Path move4;
+    public Pose aligns;
+    public Limelight3A limelight;
+    List<LLResultTypes.DetectorResult> detectorResults;
+
 
     public void buildPaths() {
         score1 = follower.pathBuilder()
@@ -58,9 +67,10 @@ public class bucket_auton extends OpMode {
 
         pick2 = new Path(new BezierLine(new Point(dep_1), new Point(pick2_pos)));
         pick2.setLinearHeadingInterpolation(dep_1.getHeading(), pick2_pos.getHeading());
+        align = new Path(new BezierLine(new Point(follower.getPose()),new Point(aligns)));
 
-        score2 = new Path(new BezierLine(new Point(pick2_pos), new Point(Dep_2)));
-        score2.setLinearHeadingInterpolation(pick2_pos.getHeading(), Dep_2.getHeading());
+        score2 = new Path(new BezierLine(new Point(follower.getPose()), new Point(Dep_2)));
+        score2.setLinearHeadingInterpolation(follower.getPose().getHeading(), Dep_2.getHeading());
 
         pick3 = new Path(new BezierLine(new Point(Dep_2), new Point(pick3_pos)));
         pick3.setLinearHeadingInterpolation(Dep_2.getHeading(), pick3_pos.getHeading());
