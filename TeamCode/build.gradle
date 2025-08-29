@@ -14,10 +14,18 @@
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
+apply plugin: 'org.jetbrains.kotlin.android'
+
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
-
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    compileSdk 35
+    defaultConfig {
+        minSdk 24
+    }
     packagingOptions {
         jniLibs.useLegacyPackaging true
     }
@@ -25,8 +33,9 @@ android {
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation "com.bylazar:fullpanels"
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.21'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.9.20'
 }
