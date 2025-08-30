@@ -11,6 +11,7 @@ import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -30,6 +31,8 @@ public class bucketautonwautoaim extends OpMode {
     public static double normal_pos = 1, upside_pos = 0.32, middle = 0.66;
     public static int target = 0;
 
+    public double difference = 0;
+
     private DcMotor arm;
     private Servo clawservo;
     private Servo twist;
@@ -40,6 +43,7 @@ public class bucketautonwautoaim extends OpMode {
     private final Pose startPose = new Pose(10, 110, Math.toRadians(270));
     private final Pose dep_1 = new Pose(10, 118, Math.toRadians(270));
     private final Pose pick2_pos = new Pose(31, 112, Math.toRadians(180));
+    private Pose tolerancePos;
     private final Pose Dep_2 = new Pose(20,124, Math.toRadians(315));
     private final Pose pick3_pos = new Pose(31,126, Math.toRadians(180));
     private final Pose pick4_pos = new Pose(48, 121, Math.toRadians(270));
@@ -56,6 +60,7 @@ public class bucketautonwautoaim extends OpMode {
     private Path move4;
     public Pose aligns;
     public Limelight3A limelight;
+    private LLResult result;
     List<LLResultTypes.DetectorResult> detectorResults;
 
 
@@ -109,14 +114,29 @@ public class bucketautonwautoaim extends OpMode {
                 break;
 
             case 2:
+                if (follower.getPose().roughlyEquals(pick2_pos) && !follower.isBusy()){
+                    if(result.getTx() < 4.6){
+                        difference = 0.5;
+                        follower.followPath(adjustPath());
+
+                    } else if (result.getTx() > 4.9) {
+                        difference = -0.5;
+                        follower.followPath(adjustPath());
+                    } else{
+                        setPathState(3);
+                    }
+
+                }
+                break;
+            case 3:
                 if (pathTimer.getElapsedTimeSeconds() > 0.5) {
                     target = -1550;
                 }
                 if (pathTimer.getElapsedTimeSeconds() > 0.8)
-                    setPathState(3);
+                    setPathState(4);
                 break;
 
-            case 3:
+            case 4:
                 if (!follower.isBusy()) {
                     if (Math.abs(arm.getCurrentPosition() - (-1550)) < 25) {
                         clawservo.setPosition(close_pos);
@@ -126,18 +146,6 @@ public class bucketautonwautoaim extends OpMode {
 
                         if (pathTimer.getElapsedTimeSeconds() > 7) {
                             follower.followPath(score2);
-                            setPathState(4);
-                        }
-                    }
-                }
-                break;
-
-            case 4:
-                if (!follower.isBusy()) {
-                    if (Math.abs(arm.getCurrentPosition() - (-870)) < 25) {
-                        clawservo.setPosition(open_pos);
-                        if (pathTimer.getElapsedTimeSeconds() > 4) {
-                            follower.followPath(pick3);
                             setPathState(5);
                         }
                     }
@@ -145,13 +153,39 @@ public class bucketautonwautoaim extends OpMode {
                 break;
 
             case 5:
-                if(pathTimer.getElapsedTimeSeconds()>5) {
-                    target = -1550;
-                    setPathState(6);
+                if (!follower.isBusy()) {
+                    if (Math.abs(arm.getCurrentPosition() - (-870)) < 25) {
+                        clawservo.setPosition(open_pos);
+                        if (pathTimer.getElapsedTimeSeconds() > 4) {
+                            follower.followPath(pick3);
+                            setPathState(6);
+                        }
+                    }
                 }
                 break;
 
             case 6:
+                if (follower.getPose().roughlyEquals(pick3_pos) && !follower.isBusy()){
+                    if(result.getTx() < 4.6){
+                        difference = 0.5;
+                        follower.followPath(adjustPath());
+
+                    } else if (result.getTx() > 4.9) {
+                        difference = -0.5;
+                        follower.followPath(adjustPath());
+                    } else{
+                        setPathState(7);
+                    }
+                }
+
+            case 7:
+                if(pathTimer.getElapsedTimeSeconds()>5) {
+                    target = -1550;
+                    setPathState(8);
+                }
+                break;
+
+            case 8:
                 if (!follower.isBusy()) {
                     if (Math.abs(arm.getCurrentPosition() - (-1550)) < 25) {
                         clawservo.setPosition(close_pos);
@@ -161,25 +195,39 @@ public class bucketautonwautoaim extends OpMode {
                     }
                     if (pathTimer.getElapsedTimeSeconds() > 6) {
                         follower.followPath(score3);
-                        setPathState(7);
+                        setPathState(9);
 
                     }
                 }
                 break;
 
-            case 7:
+            case 9:
                 if (!follower.isBusy()) {
                     if (Math.abs(arm.getCurrentPosition() - (-870)) < 25) {
                         clawservo.setPosition(open_pos);
                     }
                     if (pathTimer.getElapsedTimeSeconds() > 3) {
                         follower.followPath(pick4);
-                        setPathState(8);
+                        setPathState(10);
                     }
                 }
                 break;
 
-            case 8:
+            case 10:
+                if(follower.getPose().roughlyEquals(pick4_pos) && !follower.isBusy()){
+                    if(result.getTx() < 4.6){
+                        difference = 0.5;
+                        follower.followPath(adjustPath());
+
+                    } else if (result.getTx() > 4.9) {
+                        difference = -0.5;
+                        follower.followPath(adjustPath());
+                    } else{
+                        setPathState(11);
+                    }
+                }
+
+            case 11:
                 if (pathTimer.getElapsedTimeSeconds()>1.5) {
                     target = -1550;
                     twist.setPosition(middle);
@@ -189,39 +237,52 @@ public class bucketautonwautoaim extends OpMode {
                             if (pathTimer.getElapsedTimeSeconds() > 1) {
                                 follower.followPath(move4);
 
-                                setPathState(9);
+                                setPathState(12);
                             }
                         }
                     }
                 }
                 break;
 
-            case 9:
+            case 12:
                 if (pathTimer.getElapsedTimeSeconds()>1) {
                     target = -870;
-                    setPathState(11);
+                    setPathState(13);
                 }
                 break;
 
-            case 11:
+            case 13:
                 if (!follower.isBusy()) {
                     follower.followPath(score4);
                     if (!follower.isBusy()&Math.abs(arm.getCurrentPosition() - (-870)) < 25) {
                         clawservo.setPosition(open_pos);
                         if (pathTimer.getElapsedTimeSeconds() > 1) {
-                            setPathState(12);
+                            setPathState(14);
                         }
                     }
                 }
                 break;
 
-            case 12:
+            case 14:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
                 break;
         }
     }
+
+    public Path adjustPath(){
+        Pose currentPose = follower.getPose();
+        Path adjustedPath = new Path(new BezierLine(
+                new Point(currentPose),
+                new Point(currentPose.getX(),currentPose.getY()+difference)
+        ));
+        adjustedPath.setLinearHeadingInterpolation(currentPose.getHeading(), currentPose.getHeading());
+
+        return adjustedPath;
+    }
+
+
 
     public void setPathState(int pState) {
         pathState = pState;
