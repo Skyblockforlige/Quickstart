@@ -125,7 +125,6 @@ public class bucketautonwautoaim extends OpMode {
                     } else{
                         setPathState(3);
                     }
-
                 }
                 break;
             case 3:
@@ -177,6 +176,7 @@ public class bucketautonwautoaim extends OpMode {
                         setPathState(7);
                     }
                 }
+                break;
 
             case 7:
                 if(pathTimer.getElapsedTimeSeconds()>5) {
@@ -226,6 +226,7 @@ public class bucketautonwautoaim extends OpMode {
                         setPathState(11);
                     }
                 }
+                break;
 
             case 11:
                 if (pathTimer.getElapsedTimeSeconds()>1.5) {
